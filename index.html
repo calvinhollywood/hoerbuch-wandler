@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; img-src 'self' data:; media-src 'self' blob:; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hörbuch-Wandler · Community Lab</title>
+<meta name="description" content="Video reinziehen, Audiodatei rausbekommen. Aus deinem Live-Call wird ein Hörbuch. Läuft komplett in deinem Browser, dein Video wird nirgendwohin hochgeladen.">
+<meta name="theme-color" content="#070b14">
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/skool-cat.png" type="image/png">
+<link rel="preload" href="fonts/anton-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Zum Seitenanfang">
+      <img src="img/skool-logo.png" alt="skool" width="74" height="24">
+      <span>Community Lab</span>
+    </a>
+    <div class="by">Calvin Hollywood · Skool Ambassador D-A-CH</div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-img" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow">Werkzeug aus dem Community Lab</span>
+      <h1 class="goldtext">Hörbuch-<br>Wandler</h1>
+      <p class="sub">Zieh dein Video rein und bekomm eine Audiodatei zurück. So wird aus deinem Live-Call ein Hörbuch, das deine Mitglieder unterwegs hören können.</p>
+      <a class="sicher" href="#sicher">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2.5"/></svg>
+        <span><b>Dein Video verlässt nie deinen Computer.</b> Kein Upload, kein Speichern, niemand sieht oder hört mit. Die Umwandlung läuft komplett auf deinem Gerät.</span>
+      </a>
+      <div class="chips">
+        <span class="chip"><b>Kostenlos</b></span>
+        <span class="chip"><b>Ohne</b> Anmeldung</span>
+        <span class="chip">Bis <b>1 GB</b></span>
+        <span class="chip"><b>MP3</b> und <b>M4A</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="wandler" class="wrap">
+    <div class="panel werkbank">
+      <!-- Schritt 1: Video wählen -->
+      <div id="s-waehlen" class="schritt">
+        <label class="ablage" id="ablage" for="datei">
+          <input type="file" id="datei" accept="video/*,.mp4,.mov,.m4v,.webm,.mkv,.avi,.mts,.wmv">
+          <svg class="ablage-ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="10" width="26" height="28" rx="4"/><path d="m32 20 10-6v20l-10-6"/><path d="M19 17v12M14 24l5 5 5-5"/></svg>
+          <strong class="ablage-titel">Video hier reinziehen</strong>
+          <span class="ablage-oder">oder</span>
+          <span class="knopf">Video auswählen</span>
+          <span class="ablage-klein">MP4, MOV, WebM, MKV und mehr · höchstens 1 GB · bleibt auf deinem Gerät</span>
+        </label>
+        
+      </div>
+
+      <!-- Schritt 2: Format wählen -->
+      <div id="s-format" class="schritt" hidden>
+        <div class="datei-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>
+          <div><strong id="f-name"></strong><span id="f-meta"></span></div>
+          <button type="button" class="link-knopf" id="anderes">Anderes Video</button>
+        </div>
+        <fieldset class="formate">
+          <legend>Welche Audiodatei möchtest du?</legend>
+          <label class="format"><input type="radio" name="fmt" value="beide" checked><span><b>Beide</b><small>MP3 und M4A, du entscheidest danach</small></span></label>
+          <label class="format"><input type="radio" name="fmt" value="mp3"><span><b>MP3</b><small>Läuft wirklich überall</small></span></label>
+          <label class="format"><input type="radio" name="fmt" value="m4a"><span><b>M4A</b><small>Beste Qualität, ideal für Apple</small></span></label>
+        </fieldset>
+        <button type="button" class="knopf gross" id="start">Audiodatei erstellen</button>
+        <p class="motor" id="motor"><span class="punkt"></span><span id="motor-text">Werkzeug wird vorbereitet …</span></p>
+      </div>
+
+      <!-- Schritt 3: Arbeiten -->
+      <div id="s-arbeit" class="schritt" hidden>
+        <p class="arbeit-titel" id="a-titel">Wird umgewandelt …</p>
+        <div class="balken" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="balken"><i id="balken-i"></i></div>
+        <p class="arbeit-meta"><span id="a-prozent">0 %</span><span id="a-rest"></span></p>
+        <p class="arbeit-hinweis">Lass diesen Tab offen, bis es fertig ist. Dein Video bleibt dabei auf deinem Gerät.</p>
+        <button type="button" class="link-knopf" id="abbrechen">Abbrechen</button>
+      </div>
+
+      <!-- Schritt 4: Fertig -->
+      <div id="s-fertig" class="schritt" hidden>
+        <p class="fertig-titel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Fertig. Deine Audiodatei ist bereit.</p>
+        <div id="ergebnisse" class="ergebnisse"></div>
+        <button type="button" class="knopf zweit" id="neu">Nächstes Video umwandeln</button>
+      </div>
+
+      <!-- Fehler -->
+      <div id="s-fehler" class="schritt" hidden>
+        <p class="fehler-titel" id="e-titel">Das hat leider nicht geklappt.</p>
+        <p class="fehler-text" id="e-text"></p>
+        <button type="button" class="knopf zweit" id="nochmal">Nochmal versuchen</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">So einfach geht's</span>
+      <h2 class="goldtext">In drei Schritten</h2>
+    </div>
+    <ol class="grid3 schritte-karten">
+      <li class="panel karte"><span class="nr">1</span><h3>Video reinziehen</h3><p>Zum Beispiel die Aufzeichnung deines Live-Calls aus Zoom, Skool oder OBS.</p></li>
+      <li class="panel karte"><span class="nr">2</span><h3>Format wählen</h3><p>MP3 läuft überall. M4A klingt bei gleicher Größe etwas besser und ist ideal für Apple-Geräte.</p></li>
+      <li class="panel karte"><span class="nr">3</span><h3>Herunterladen</h3><p>Die fertige Datei kannst du direkt in deine Community, deinen Podcast oder deine Cloud legen.</p></li>
+    </ol>
+  </section>
+
+  <section class="wrap">
+    <div class="panel schutz" id="sicher">
+      <div class="sec-head">
+        <span class="eyebrow">Datenschutz in Klartext</span>
+        <h2 class="goldtext">Dein Video bleibt bei dir</h2>
+      </div>
+      <ul class="haken-liste">
+        <li><b>Nichts wird hochgeladen.</b> Diese Seite liefert nur das Werkzeug aus. Die Umwandlung passiert direkt in deinem Browser auf deinem eigenen Gerät. Dein Video und deine Audiodatei verlassen dein Gerät nie.</li>
+        <li><b>Niemand kann reinschauen.</b> Weil nichts bei uns ankommt, kann auch niemand deine Aufnahmen sehen oder hören. Auch Calvin nicht.</li>
+        <li><b>Keine Fremddienste.</b> Keine Cookies, keine Statistik, kein Tracking, keine Schriften oder Skripte von anderen Anbietern. Alles kommt von dieser Seite selbst.</li>
+        <li><b>Technisch abgesichert.</b> Die Seite sagt deinem Browser ausdrücklich, dass sie mit keiner anderen Adresse Daten austauschen darf. Selbst ein Fehler könnte dein Video also nicht woanders hinschicken.</li>
+      </ul>
+      <p class="tipp"><b>Prüf es selbst:</b> Wähl dein Video aus, warte, bis unter dem Knopf „Werkzeug bereit“ steht, und schalte dann dein WLAN aus. Die Umwandlung funktioniert trotzdem, weil sie gar kein Internet braucht.</p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Gut zu wissen</span>
+      <h2 class="goldtext">Häufige Fragen</h2>
+    </div>
+    <div class="fragen">
+      <details class="panel" open>
+        <summary>Mein Video ist größer als 1 GB. Was jetzt?</summary>
+        <div><p>Verkleinere es vorher. Das geht kostenlos mit <a href="https://handbrake.fr/" rel="noopener" target="_blank">HandBrake</a> (Mac und Windows): Video öffnen, links bei „Voreinstellung“ zum Beispiel „Fast 720p30“ wählen, auf „Start“ klicken. Der Ton bleibt dabei gut genug für ein Hörbuch, die Datei wird deutlich kleiner.</p><p>Tipp: Viele Programme wie Zoom können auch direkt eine reine Audiodatei speichern. Dann brauchst du diesen Wandler gar nicht.</p></div>
+      </details>
+      <details class="panel">
+        <summary>MP3 oder M4A, was soll ich nehmen?</summary>
+        <div><p><b>MP3</b> spielt wirklich jedes Gerät und jedes Programm ab. Wenn du unsicher bist, nimm MP3.</p><p><b>M4A</b> ist die Audio-Variante von MP4. Sie klingt bei gleicher Dateigröße etwas besser, ist bei den meisten Videos schneller fertig (der Ton wird nur herausgelöst, nicht neu berechnet) und läuft auf iPhone, Mac und in den meisten Playern.</p></div>
+      </details>
+      <details class="panel">
+        <summary>Wie lange dauert das?</summary>
+        <div><p>M4A geht am schnellsten, weil der Ton meist nur herausgelöst wird: Ein zweistündiges Video mit 1 GB ist in etwa einer Minute fertig. MP3 wird neu berechnet und braucht auf einem normalen Computer grob zwei Minuten pro Stunde Video. Auf dem Handy oder einem älteren Rechner kann es länger dauern.</p></div>
+      </details>
+      <details class="panel">
+        <summary>Geht das auch auf dem Handy?</summary>
+        <div><p>Ja, aber für lange Aufnahmen ist ein Computer besser. Handys haben weniger Arbeitsspeicher und bremsen den Browser, wenn der Bildschirm ausgeht. Lass das Display während der Umwandlung an.</p></div>
+      </details>
+      <details class="panel">
+        <summary>Was brauche ich dafür?</summary>
+        <div><p>Nur einen aktuellen Browser, zum Beispiel Safari, Firefox, Edge, Comet oder Chrome. Du musst nichts installieren und dich nirgends anmelden.</p></div>
+      </details>
+      <details class="panel">
+        <summary>Darf ich die Audiodatei weitergeben?</summary>
+        <div><p>Die Datei gehört dir, genau wie dein Video. Wenn andere Menschen im Call zu hören sind, frag sie vorher kurz, ob sie mit der Weitergabe als Hörbuch einverstanden sind.</p></div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap">
+    <span>Ein Werkzeug von Calvin Hollywood. Kein Angebot der Skool, Inc.</span>
+    <nav><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="lizenzen.html">Lizenzen</a></nav>
+  </div>
+</footer>
+
+<noscript><p class="wrap">Bitte JavaScript aktivieren, sonst kann der Wandler nicht arbeiten.</p></noscript>
+<script type="module" src="app.js"></script>
+</body>
+</html>
